@@ -85,25 +85,96 @@ class WebsiteController extends Controller
         }
     }
 
-    public function update(Request $request, Website $website)
+    public function update(Request $request, Website $website, AIContentService $ai)
     {
         try {
             $this->authorizeUser($website);
 
-            $validated = $this->validateRequest($request);
+            // Validate input
+            $validated = $request->validate([
+                'business_name' => 'required|string|max:255',
+                'business_type' => 'required|string|max:255',
+                'description' => 'required|string',
 
-            //  Remove old cache
-            $oldKey = $this->getCacheKey([
+                // Optional manual fields
+                'title' => 'nullable|string',
+                'tagline' => 'nullable|string',
+                'about' => 'nullable|string',
+                'services' => 'nullable|array',
+
+                'mode' => 'nullable|in:auto,manual'
+            ]);
+
+            $mode = $validated['mode'] ?? 'auto';
+
+            // Detect if core fields changed
+            $isChanged =
+                $website->business_name !== $validated['business_name'] ||
+                $website->business_type !== $validated['business_type'] ||
+                $website->description !== $validated['description'];
+
+            // Remove OLD cache
+            $oldCacheKey = $this->getCacheKey([
                 'business_name' => $website->business_name,
                 'business_type' => $website->business_type,
                 'description' => $website->description,
             ]);
 
-            Cache::forget($oldKey);
+            Cache::forget($oldCacheKey);
 
+            // ============================
+            //  MANUAL MODE
+            // ============================
+            if ($mode === 'manual') {
+
+                $website->update([
+                    'business_name' => $validated['business_name'],
+                    'business_type' => $validated['business_type'],
+                    'description' => $validated['description'],
+
+                    'title' => $validated['title'] ?? $website->title,
+                    'tagline' => $validated['tagline'] ?? $website->tagline,
+                    'about' => $validated['about'] ?? $website->about,
+                    'services' => $validated['services'] ?? $website->services,
+                ]);
+
+                return $this->successResponse('Website updated manually', $website);
+            }
+
+            // ============================
+            //  AUTO MODE (DEFAULT)
+            // ============================
+            if ($isChanged) {
+
+                $cacheKey = $this->getCacheKey([
+                    'business_name' => $validated['business_name'],
+                    'business_type' => $validated['business_type'],
+                    'description' => $validated['description'],
+                ]);
+
+                if (Cache::has($cacheKey)) {
+                    $generated = Cache::get($cacheKey);
+                    Log::info('Using cached AI content (update)');
+                } else {
+                    $generated = $ai->generate($validated);
+                    Cache::put($cacheKey, $generated, now()->addMinutes(10));
+                    Log::info('Generated new AI content (update)');
+                }
+
+                $website->update([
+                    ...$validated,
+                    ...$generated
+                ]);
+
+                return $this->successResponse('Website updated with regenerated AI content', $website);
+            }
+
+            // ============================
+            //  NO CHANGE
+            // ============================
             $website->update($validated);
 
-            return $this->successResponse('Website updated successfully', $website);
+            return $this->successResponse('Website updated (no major changes)', $website);
         } catch (\Exception $e) {
             Log::error('Update error', ['error' => $e->getMessage()]);
             return $this->errorResponse('Failed to update website');
