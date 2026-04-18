@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Website;
 use Illuminate\Http\Request;
 use App\Services\AIContentService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class WebsiteController extends Controller
@@ -17,6 +18,7 @@ class WebsiteController extends Controller
     public function index()
     {
         try {
+
             Log::info('Fetching websites', [
                 'user_id' => auth()->id()
             ]);
@@ -44,6 +46,16 @@ class WebsiteController extends Controller
     public function store(Request $request, AIContentService $ai)
     {
         try {
+            $count = Website::where('user_id', auth()->id())
+                ->whereDate('created_at', Carbon::today())
+                ->count();
+
+            if ($count >= 5) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Daily limit reached (5 per day)'
+                ], 429);
+            }
             Log::info('Website generation started', [
                 'user_id' => auth()->id(),
                 'input' => $request->all()
