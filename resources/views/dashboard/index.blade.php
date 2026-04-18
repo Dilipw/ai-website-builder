@@ -41,11 +41,11 @@
         <h3 class="text-lg font-semibold mb-4">Platform Info</h3>
 
         <ul class="text-gray-600 space-y-2 text-sm">
-            <li>• You can generate maximum <b>5 websites per day</b></li>
-            <li>• Duplicate requests are optimized using <b>caching</b></li>
-            <li>• All generated content is stored securely</li>
-            <li>• You can manage (edit/delete) all your websites</li>
-            <li>• API is protected using token-based authentication</li>
+            <li>You can generate maximum <b>5 websites per day</b></li>
+            <li>Duplicate requests are optimized using <b>caching</b></li>
+            <li>All generated content is stored securely</li>
+            <li>You can manage (edit/delete) all your websites</li>
+            <li>API is protected using token-based authentication</li>
         </ul>
 
     </div>
@@ -79,17 +79,42 @@
                 // latest 5
                 let html = '';
 
-                websites.slice(0, 5).forEach(w => {
-                    html += `
-            <div class="border p-3 rounded flex justify-between">
+                if (websites.length === 0) {
+                    html = `
+            <p class="text-gray-400 text-sm">
+                No websites created yet.
+            </p>
+        `;
+                } else {
+                    websites.slice(0, 5).forEach(w => {
+                        html += `
+            <div class="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 hover:shadow transition">
+
+                <!-- LEFT -->
                 <div>
-                    <b>${w.business_name}</b>
+                    <p class="font-semibold text-gray-800">${w.business_name}</p>
                     <p class="text-sm text-gray-500">${w.title}</p>
                 </div>
-                <a href="/websites/${w.id}" class="text-blue-500">View</a>
+
+                <!-- RIGHT ACTIONS -->
+                <div class="flex gap-3 text-sm">
+
+                    <a href="/websites/${w.id}"
+                       class="px-3 py-1 rounded border text-blue-600 hover:bg-blue-50 transition">
+                        View
+                    </a>
+
+                    <a href="/websites/${w.id}/preview" target="_blank"
+                       class="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition">
+                        Preview
+                    </a>
+
+                </div>
+
             </div>
-        `;
-                });
+            `;
+                    });
+                }
 
                 document.getElementById('recentList').innerHTML = html;
             });
