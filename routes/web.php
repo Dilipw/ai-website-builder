@@ -25,6 +25,10 @@ Route::middleware('frontend.auth')->group(function () {
     Route::get('/websites/create', [DashboardController::class, 'create']);
     Route::get('/websites/{id}', [DashboardController::class, 'show']);
     Route::get('/websites/{id}/edit', [DashboardController::class, 'edit']);
+
+    Route::get('/websites/{id}/preview', function ($id) {
+        return view('dashboard.websites.preview', compact('id'));
+    });
 });
 
 // logout

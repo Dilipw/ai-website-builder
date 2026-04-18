@@ -2,7 +2,9 @@
 
 @section('content')
     <h2 class="text-2xl font-bold mb-6">Website Details</h2>
-
+    <a href="/websites/{{ $id }}/preview" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded">
+        Preview Website
+    </a>
     <div id="data" class="space-y-6"></div>
 
     <script>
