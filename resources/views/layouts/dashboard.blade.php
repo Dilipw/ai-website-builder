@@ -11,23 +11,30 @@
 
     <body class="bg-gray-50 text-gray-800 font-sans">
 
-        <!-- NAVBAR -->
         <header class="bg-white shadow-sm border-b">
             <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
                 <h1 class="text-lg font-bold">AI Builder</h1>
 
-                <div class="flex items-center gap-6">
-                    <a href="/dashboard" class="hover:text-blue-600 transition">Dashboard</a>
-                    <button onclick="logout()" class="text-red-500 hover:text-red-700 transition">
+                <div class="flex items-center gap-6 text-sm">
+
+                    <a href="/dashboard" class="hover:text-blue-600">Dashboard</a>
+
+                    <a href="/websites" class="hover:text-blue-600">Websites</a>
+
+                    <a href="/websites/create" class="bg-blue-600 text-white px-3 py-1 rounded">
+                        + Create
+                    </a>
+
+                    <button onclick="logout()" class="text-red-500 hover:text-red-700">
                         Logout
                     </button>
+
                 </div>
 
             </div>
         </header>
 
-        <!-- CONTENT -->
         <main class="max-w-7xl mx-auto p-6">
             @yield('content')
         </main>
