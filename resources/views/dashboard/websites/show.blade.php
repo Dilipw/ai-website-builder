@@ -1,11 +1,22 @@
 @extends('layouts.dashboard')
 
 @section('content')
-    <h2 class="text-2xl font-bold mb-6">Website Details</h2>
-    <a href="/websites/{{ $id }}/preview" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded">
-        Preview Website
-    </a>
-    <div id="data" class="space-y-6"></div>
+    <div class="max-w-6xl mx-auto">
+
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+            <h2 class="text-2xl md:text-3xl font-bold">Website Details</h2>
+
+            <a href="/websites/{{ $id }}/preview" target="_blank"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow transition text-center">
+                Preview Website
+            </a>
+        </div>
+
+        <!-- CONTENT -->
+        <div id="data"></div>
+
+    </div>
 
     <script>
         fetch('/api/websites/{{ $id }}', {
@@ -18,7 +29,8 @@
             .then(data => {
 
                 if (!data.status) {
-                    document.getElementById('data').innerHTML = `<p class="text-red-500">Failed to load data</p>`;
+                    document.getElementById('data').innerHTML =
+                        `<p class="text-red-500">Failed to load data</p>`;
                     return;
                 }
 
@@ -26,47 +38,77 @@
 
                 let servicesHtml = '';
                 if (w.services && w.services.length > 0) {
-                    servicesHtml = w.services.map(s => `<li class="mb-1">• ${s}</li>`).join('');
+                    servicesHtml = w.services.map(s => `
+            <li class="flex items-center gap-2">
+                <span class="text-blue-500">•</span> ${s}
+            </li>
+        `).join('');
                 }
 
                 document.getElementById('data').innerHTML = `
-    
-    <div class="bg-white shadow rounded p-6">
-        
-        <!-- TITLE -->
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">${w.title}</h1>
-        
-        <!-- TAGLINE -->
-        <p class="text-gray-600 italic mb-4">${w.tagline}</p>
 
-        <hr class="my-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <!-- BUSINESS INFO -->
-        <div class="mb-4">
-            <p><strong>Business Name:</strong> ${w.business_name}</p>
-            <p><strong>Business Type:</strong> ${w.business_type}</p>
-            <p><strong>Description:</strong> ${w.description}</p>
+        <!-- LEFT SIDE (MAIN CONTENT) -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- TITLE CARD -->
+            <div class="bg-white shadow rounded-xl p-6 border">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                    ${w.title}
+                </h1>
+                <p class="text-gray-500 italic">
+                    ${w.tagline}
+                </p>
+            </div>
+
+            <!-- ABOUT -->
+            <div class="bg-white shadow rounded-xl p-6 border">
+                <h3 class="text-lg font-semibold mb-3 border-b pb-2">
+                    About Us
+                </h3>
+                <p class="text-gray-700 leading-relaxed">
+                    ${w.about}
+                </p>
+            </div>
+
+            <!-- SERVICES -->
+            <div class="bg-white shadow rounded-xl p-6 border">
+                <h3 class="text-lg font-semibold mb-3 border-b pb-2">
+                    Services
+                </h3>
+
+                <ul class="space-y-2 text-gray-700">
+                    ${servicesHtml || '<p class="text-gray-400">No services available</p>'}
+                </ul>
+            </div>
+
         </div>
 
-        <!-- ABOUT -->
-        <div class="mb-4">
-            <h3 class="text-xl font-semibold mb-2">About Us</h3>
-            <p class="text-gray-700">${w.about}</p>
-        </div>
+        <!-- RIGHT SIDE (INFO PANEL) -->
+        <div class="space-y-6">
 
-        <!-- SERVICES -->
-        <div>
-            <h3 class="text-xl font-semibold mb-2">Services</h3>
-            <ul class="text-gray-700">
-                ${servicesHtml}
-            </ul>
+            <div class="bg-white shadow rounded-xl p-6 border">
+                <h3 class="text-lg font-semibold mb-3 border-b pb-2">
+                    Business Info
+                </h3>
+
+                <div class="space-y-2 text-sm text-gray-700">
+                    <p><strong>Name:</strong> ${w.business_name}</p>
+                    <p><strong>Type:</strong> ${w.business_type}</p>
+                    <p><strong>Description:</strong></p>
+                    <p class="text-gray-600">${w.description}</p>
+                </div>
+            </div>
+
         </div>
 
     </div>
     `;
             })
             .catch(() => {
-                document.getElementById('data').innerHTML = `<p class="text-red-500">Server error</p>`;
+                document.getElementById('data').innerHTML =
+                    `<p class="text-red-500">Server error</p>`;
             });
     </script>
 @endsection
