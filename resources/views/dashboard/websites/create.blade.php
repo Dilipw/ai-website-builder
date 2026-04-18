@@ -35,7 +35,7 @@
             const type = document.getElementById('type').value.trim();
             const desc = document.getElementById('desc').value.trim();
 
-            // 🔐 FRONTEND VALIDATION
+            //  FRONTEND VALIDATION
             if (!name || !type || !desc) {
                 showError('All fields are required');
                 return;
@@ -57,13 +57,13 @@
                 .then(async res => {
                     const data = await res.json();
 
-                    // ❌ HANDLE VALIDATION / RATE LIMIT / SERVER ERROR
+                    //  HANDLE VALIDATION / RATE LIMIT / SERVER ERROR
                     if (!res.ok) {
                         showError(data.message || 'Something went wrong');
                         return;
                     }
 
-                    // ✅ SUCCESS
+                    //  SUCCESS
                     window.location.href = '/websites';
                 })
                 .catch(() => {
