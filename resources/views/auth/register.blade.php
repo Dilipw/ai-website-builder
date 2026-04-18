@@ -1,15 +1,47 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
-        <h2 class="text-xl mb-4">Register</h2>
+    <div class="min-h-screen flex items-center justify-center">
 
-        <input id="name" placeholder="Name" class="w-full border p-2 mb-3">
-        <input id="email" placeholder="Email" class="w-full border p-2 mb-3">
-        <input id="password" type="password" placeholder="Password" class="w-full border p-2 mb-3">
+        <div class="w-full max-w-md bg-white/5 backdrop-blur border border-gray-700 p-8 rounded-lg shadow-lg">
 
-        <button onclick="register()" class="bg-green-500 text-white w-full p-2 rounded">
-            Register
-        </button>
+            <h2 class="text-2xl font-bold mb-6 text-center text-white">
+                Register
+            </h2>
+
+            <input id="name" placeholder="Name"
+                class="w-full bg-transparent border border-gray-600 text-white p-3 mb-4 rounded focus:outline-none focus:border-green-500">
+
+            <input id="email" type="email" placeholder="Email"
+                class="w-full bg-transparent border border-gray-600 text-white p-3 mb-4 rounded focus:outline-none focus:border-green-500">
+
+            <input id="password" type="password" placeholder="Password"
+                class="w-full bg-transparent border border-gray-600 text-white p-3 mb-4 rounded focus:outline-none focus:border-green-500">
+
+            <input id="password_confirmation" type="password" placeholder="Confirm Password"
+                class="w-full bg-transparent border border-gray-600 text-white p-3 mb-4 rounded focus:outline-none focus:border-green-500">
+
+            <button onclick="registerUser()"
+                class="w-full bg-green-600 hover:bg-green-700 p-3 rounded transition shadow-lg shadow-green-500/30">
+                Register
+            </button>
+
+        </div>
+
     </div>
+
+    <script>
+        function registerUser() {
+
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('password_confirmation').value;
+
+            if (password !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            register(); 
+        }
+    </script>
 @endsection
