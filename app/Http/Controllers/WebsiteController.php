@@ -97,7 +97,11 @@ class WebsiteController extends Controller
     public function update(Request $request, Website $website, AIContentService $ai)
     {
         try {
+            Log::info($request->all());
+            
             $this->authorizeUser($website);
+
+            Log::info('Update request received', ['website_id' => $website->id, 'user_id' => auth()->id()]);
 
             // Validate input
             $validated = $request->validate([
