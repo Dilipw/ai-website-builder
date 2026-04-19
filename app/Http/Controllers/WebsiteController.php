@@ -74,9 +74,18 @@ class WebsiteController extends Controller
         }
     }
 
-    public function show(Website $website)
+    public function show($id)
     {
         try {
+            $website = Website::find($id);
+
+            if (!$website) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Website not found'
+                ], 404);
+            }
+
             $this->authorizeUser($website);
 
             return $this->successResponse('Website fetched successfully', $website);
