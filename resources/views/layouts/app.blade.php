@@ -3,9 +3,7 @@
 
     <head>
         <meta charset="UTF-8">
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         <title>AI Website Builder</title>
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -29,11 +27,47 @@
             </button>
 
             <!-- NAV LINKS -->
-            <div id="nav-links" class="hidden md:flex items-center gap-6 text-sm md:text-base"></div>
+            <div id="nav-links" class="hidden md:flex items-center gap-6 text-sm md:text-base">
+
+                @auth
+                    <a href="/dashboard" class="hover:text-blue-400">Dashboard</a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="text-red-400 hover:text-red-600">
+                            Logout
+                        </button>
+                    </form>
+                @endauth
+
+                @guest
+                    <a href="/login">Login</a>
+                    <a href="/register" class="text-green-400">Register</a>
+                @endguest
+
+            </div>
         </nav>
 
         <!-- MOBILE NAV -->
-        <div id="mobile-menu" class="hidden flex-col bg-black/80 backdrop-blur p-4 space-y-3 md:hidden"></div>
+        <div id="mobile-menu" class="hidden flex-col bg-black/80 backdrop-blur p-4 space-y-3 md:hidden">
+
+            @auth
+                <a href="/dashboard">Dashboard</a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="text-red-400">
+                        Logout
+                    </button>
+                </form>
+            @endauth
+
+            @guest
+                <a href="/login">Login</a>
+                <a href="/register" class="text-green-400">Register</a>
+            @endguest
+
+        </div>
 
         <!-- CONTENT -->
         <div class="px-4 md:px-10 py-8">
@@ -41,45 +75,10 @@
         </div>
 
         <script>
-            function updateNavbar() {
-                const token = localStorage.getItem('token');
-                const nav = document.getElementById('nav-links');
-                const mobile = document.getElementById('mobile-menu');
-
-                if (token) {
-                    nav.innerHTML = `
-                    <a href="/dashboard" class="hover:text-blue-400">Dashboard</a>
-                    <button onclick="logout()" class="text-red-400 hover:text-red-600">Logout</button>
-                `;
-
-                    mobile.innerHTML = `
-                    <a href="/dashboard">Dashboard</a>
-                    <button onclick="logout()" class="text-red-400">Logout</button>
-                `;
-                } else {
-                    nav.innerHTML = `
-                    <a href="/login">Login</a>
-                    <a href="/register" class="text-green-400">Register</a>
-                `;
-
-                    mobile.innerHTML = `
-                    <a href="/login">Login</a>
-                    <a href="/register" class="text-green-400">Register</a>
-                `;
-                }
-            }
-
-            updateNavbar();
-
             // Mobile toggle
             document.getElementById('menu-btn').onclick = () => {
                 document.getElementById('mobile-menu').classList.toggle('hidden');
             };
-
-            // Protection
-            if (window.location.pathname === '/dashboard' && !localStorage.getItem('token')) {
-                window.location.href = '/login';
-            }
         </script>
 
     </body>
